@@ -20,6 +20,10 @@ function switchTab(newTab) {
     oldTab = newTab;
     oldTab.classList.add("current-tab");
 
+    document.querySelector(".fahren").style.backgroundColor =
+      "rgba(219, 226, 239, 0.5)";
+    document.querySelector(".cel").style.backgroundColor = "rgb(4, 119, 4)";
+
     if (!searchForm.classList.contains("active")) {
       //kya search form wala container is invisible, if yes then make it visible
       userInfoContainer.classList.remove("active");
@@ -80,7 +84,8 @@ async function fetchUserWeatherInfo(coordinates) {
     //HW
   }
 }
-
+var tempp = "";
+let temp = document.querySelector("[data-temp]");
 function renderWeatherInfo(weatherInfo) {
   //fistly, we have to fethc the elements
 
@@ -88,7 +93,7 @@ function renderWeatherInfo(weatherInfo) {
   const countryIcon = document.querySelector("[data-countryIcon]");
   const desc = document.querySelector("[data-weatherDesc]");
   const weatherIcon = document.querySelector("[data-weatherIcon]");
-  const temp = document.querySelector("[data-temp]");
+
   const windspeed = document.querySelector("[data-windspeed]");
   const humidity = document.querySelector("[data-humidity]");
   const cloudiness = document.querySelector("[data-cloudiness]");
@@ -96,14 +101,37 @@ function renderWeatherInfo(weatherInfo) {
   console.log(weatherInfo);
 
   //fetch values from weatherINfo object and put it UI elements
-  cityName.innerText = weatherInfo?.name;
+  let cityy = weatherInfo?.name;
+  cityName.innerText = cityy;
   countryIcon.src = `https://flagcdn.com/144x108/${weatherInfo?.sys?.country.toLowerCase()}.png`;
   desc.innerText = weatherInfo?.weather?.[0]?.description;
   weatherIcon.src = `http://openweathermap.org/img/w/${weatherInfo?.weather?.[0]?.icon}.png`;
-  temp.innerText = `${weatherInfo?.main?.temp} °C`;
+  tempp = `${weatherInfo?.main?.temp}`;
+  temp.innerText = `${tempp}°C`;
+
   windspeed.innerText = `${weatherInfo?.wind?.speed} m/s`;
   humidity.innerText = `${weatherInfo?.main?.humidity}%`;
   cloudiness.innerText = `${weatherInfo?.clouds?.all}%`;
+}
+
+document.querySelector(".fahren").style.backgroundColor =
+  "rgba(219, 226, 239, 0.5)";
+document.querySelector(".cel").style.backgroundColor = "rgb(4, 119, 4)";
+
+function tempf() {
+  document.querySelector(".cel").style.backgroundColor =
+    "rgba(219, 226, 239, 0.5)";
+  document.querySelector(".fahren").style.backgroundColor = "rgb(4, 119, 4)";
+  let tempf = (tempp * 9) / 5 + 32;
+  temp.innerText = `${tempf}°F`;
+  return;
+}
+function tempc() {
+  document.querySelector(".fahren").style.backgroundColor =
+    "rgba(219, 226, 239, 0.5)";
+  document.querySelector(".cel").style.backgroundColor = "rgb(4, 119, 4)";
+  temp.innerText = `${tempp}°C`;
+  return;
 }
 
 function getLocation() {
@@ -148,9 +176,35 @@ async function fetchSearchWeatherInfo(city) {
     );
     const data = await response.json();
     loadingScreen.classList.remove("active");
-    userInfoContainer.classList.add("active");
-    renderWeatherInfo(data);
+
+    if (response.ok && data.cod === 200) {
+      userInfoContainer.classList.add("active");
+      renderWeatherInfo(data);
+    } else {
+      // Handle API errors and display appropriate error messages
+      if (data.cod === "404") {
+        displayErrorMessage(
+          "Location not found. Please check the city name and try again."
+        );
+      } else {
+        displayErrorMessage(
+          "An error occurred while fetching weather data. Please try again later."
+        );
+      }
+    }
   } catch (err) {
-    //hW
+    displayErrorMessage(
+      "An error occurred. Please check your network connection and try again."
+    );
   }
+}
+function displayErrorMessage(message) {
+  const errorMessageElement = document.getElementById("error-message");
+  errorMessageElement.textContent = message;
+  errorMessageElement.style.display = "block";
+
+  // Hide the error message after a few seconds (e.g., 5 seconds)
+  setTimeout(() => {
+    errorMessageElement.style.display = "none";
+  }, 5000);
 }
