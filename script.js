@@ -19,6 +19,7 @@ function switchTab(newTab) {
     oldTab.classList.remove("current-tab");
     oldTab = newTab;
     oldTab.classList.add("current-tab");
+    
     errorMessageElement.style.display = "none";
     document.querySelector(".fahren").style.backgroundColor =
       "rgba(219, 226, 239, 0.5)";
