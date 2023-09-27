@@ -19,7 +19,7 @@ function switchTab(newTab) {
     oldTab.classList.remove("current-tab");
     oldTab = newTab;
     oldTab.classList.add("current-tab");
-
+    errorMessageElement.style.display = "none";
     document.querySelector(".fahren").style.backgroundColor =
       "rgba(219, 226, 239, 0.5)";
     document.querySelector(".cel").style.backgroundColor = "rgb(4, 119, 4)";
@@ -198,11 +198,10 @@ async function fetchSearchWeatherInfo(city) {
     );
   }
 }
+const errorMessageElement = document.getElementById("error-message");
 function displayErrorMessage(message) {
-  const errorMessageElement = document.getElementById("error-message");
   errorMessageElement.textContent = message;
   errorMessageElement.style.display = "block";
-
   // Hide the error message after a few seconds (e.g., 5 seconds)
   setTimeout(() => {
     errorMessageElement.style.display = "none";
